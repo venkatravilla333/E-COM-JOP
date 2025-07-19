@@ -42,3 +42,4 @@ let userSchema = new mongoose.Schema({
 
 export let User = mongoose.model('User', userSchema)
 
+// var x = 100
