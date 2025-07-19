@@ -1,6 +1,9 @@
 
 import mongoose from 'mongoose'
 import validator from 'validator'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+
 
 let userSchema = new mongoose.Schema({
   name: {
@@ -19,7 +22,8 @@ let userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Please enter password'],
-    minLength: [5, 'Please enter password morethan 5 chars']
+    minLength: [5, 'Please enter password morethan 5 chars'],
+    select: false
   },
   avathar:  {
       public_id: {
@@ -39,6 +43,19 @@ let userSchema = new mongoose.Schema({
   resetPasswordExpire: Date
   
 }, { timestamps: true })
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next()
+  let salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
+  next()
+})
+
+userSchema.methods.generateToken = function () {
+ return jwt.sign({ id: this._id }, process.env.JWT_SECRETE, {
+      expiresIn: process.env.JWT_EXPIRE
+  })
+}
 
 export let User = mongoose.model('User', userSchema)
 
