@@ -1,6 +1,7 @@
 import { createProduct, deleteProduct, getAllProducts, getSingleProduct, updateProduct } from "../controllers/productController.js";
 
 import express from 'express'
+import { verifyUserAuthentication } from "../middlewares/userAuth.js";
 
 let router = express.Router()
 // let app = express()
@@ -19,7 +20,7 @@ let router = express.Router()
 
 
 router.route('/products')
-  .get(getAllProducts)
+  .get(verifyUserAuthentication, getAllProducts)
   .post(createProduct)
 router.route('/product/:id')
   .get(getSingleProduct)
