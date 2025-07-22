@@ -10,6 +10,6 @@ router.route('/login')
 router.route('/logout')
   .post(logoutUser)
 router.route('/password/forget')
-  .post(requestPasswordReset)
+  .get(requestPasswordReset)
 
 export default router
