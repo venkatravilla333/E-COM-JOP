@@ -1,7 +1,7 @@
 import { createProduct, deleteProduct, getAllProducts, getSingleProduct, updateProduct } from "../controllers/productController.js";
 
 import express from 'express'
-import { verifyUserAuthentication } from "../middlewares/userAuth.js";
+import { roleBasedAccess, verifyUserAuthentication } from "../middlewares/userAuth.js";
 
 let router = express.Router()
 // let app = express()
@@ -20,12 +20,12 @@ let router = express.Router()
 
 
 router.route('/products')
-  .get(verifyUserAuthentication, getAllProducts)
-  .post(createProduct)
+  .get(getAllProducts)
+  .post(verifyUserAuthentication, roleBasedAccess('admin'), createProduct)
 router.route('/product/:id')
   .get(getSingleProduct)
-  .put(updateProduct)
-  .delete(deleteProduct)
+  .put(verifyUserAuthentication, roleBasedAccess('admin'), updateProduct)
+  .delete(verifyUserAuthentication, roleBasedAccess('admin'), deleteProduct)
 
 
   export default router

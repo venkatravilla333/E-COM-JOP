@@ -41,7 +41,7 @@ export let getSingleProduct = asyncHandler( async(req, res, next) => {
 })
 
 export let createProduct =  asyncHandler(async (req, res) => {
-
+    req.body.user = req.user.id;
     const product = await Product.create(req.body);
 
     res.status(201).json({

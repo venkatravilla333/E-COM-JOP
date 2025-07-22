@@ -83,3 +83,24 @@ export let logoutUser = asyncHandler(async (req, res) => {
   })
   
 })
+
+
+export const requestPasswordReset = asyncHandler(async (req, res, next) => {
+  // let { email } = req.body
+
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new HandleError("User doesn't exist", 400));
+  }
+
+  let resetToken;
+
+  try {
+    resetToken = user.generatePasswordResetToken();
+    console.log(resetToken)
+    await user.save({ validateBeforeSave: false });
+  } catch (error) {
+    return next(new HandleError("Could not save reset token, please try again later", 500));
+  }
+});
