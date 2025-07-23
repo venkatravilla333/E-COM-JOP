@@ -46,7 +46,9 @@ let userSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
+  if (!this.isModified('password')) {
+    return next()
+  } 
   let salt = await bcrypt.genSalt(10)
   this.password = await bcrypt.hash(this.password, salt)
   next()
@@ -55,8 +57,13 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = function (userEnteredPassword) {
   
   return bcrypt.compare(userEnteredPassword, this.password)
-  
 }
+
+userSchema.methods.verifyPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+
 
 userSchema.methods.generateToken = function () {
  return jwt.sign({ id: this._id }, process.env.JWT_SECRETE, {

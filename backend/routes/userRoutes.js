@@ -1,5 +1,6 @@
 import express from 'express'
-import { loginUser, logoutUser, registerUser, requestPasswordReset } from '../controllers/userController.js'
+import { getUserDetails, loginUser, logoutUser, registerUser, requestPasswordReset, resetPassword, updatePassword } from '../controllers/userController.js'
+import { verifyUserAuthentication } from '../middlewares/userAuth.js'
 
 let router = express.Router()
 
@@ -10,6 +11,11 @@ router.route('/login')
 router.route('/logout')
   .post(logoutUser)
 router.route('/password/forget')
-  .get(requestPasswordReset)
+  .post(requestPasswordReset)
+
+router.route("/reset/:token").post(resetPassword);
+
+router.route("/profile").get(verifyUserAuthentication, getUserDetails);
+router.route("/password/update").put(verifyUserAuthentication, updatePassword);
 
 export default router
