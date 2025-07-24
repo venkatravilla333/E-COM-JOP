@@ -6,6 +6,8 @@ import { sendEmail } from '../utils/sendEmail.js';
 import { CustomError } from '../utils/customError.js';
 import crypto from 'crypto'
 
+// registerUser
+
 export let registerUser = asyncHandler(async (req, res) => {
   let { name, email, password } = req.body;
 
@@ -37,6 +39,10 @@ export let registerUser = asyncHandler(async (req, res) => {
   //   token
   // })
 });
+
+
+// loginUser
+
 export let loginUser = asyncHandler(async (req, res) => {
   let { email, password } = req.body;
 
@@ -66,6 +72,8 @@ export let loginUser = asyncHandler(async (req, res) => {
   //       token
   //     })
 });
+
+// logoutUser
 
 export let logoutUser = asyncHandler(async (req, res) => {
   res.cookie('token', null, {
@@ -156,9 +164,9 @@ sendJwttoken(user,200,res)
 })
 
 
-//get user details
+//get user details (get profile)
 
-export const getUserDetails=asyncHandler(async(req , res , next)=>{
+export const getUserDetails = asyncHandler(async(req , res , next)=>{
     const user = await User.findById(req.user.id);
     res.status(200).json({
         success:true,
@@ -186,4 +194,86 @@ export const updatePassword = asyncHandler(async (req, res, next) => {
     user.password = newPassword;
     await user.save();
     sendJwttoken(user,200,res);
+})
+
+//Updating user profile
+
+export const updateProfile = asyncHandler(async(req,res,next)=>{
+    const {name,email} = req.body;
+    const updateUserDetails={
+        name,
+        email,
+    }
+   
+    const user=await User.findByIdAndUpdate(req.user.id, updateUserDetails,{
+        new:true,
+        runValidators:true
+    })
+    res.status(200).json({
+        success:true,
+        message:"Profile Updated Successfully",
+        user
+    })
+})
+
+
+//admin
+
+export const getUsersList = asyncHandler(async(req,res,next)=>{
+    const users = await User.find();
+    res.status(200).json({
+        success:true,
+        users
+    })
+})
+
+//Admin- Getting single user information
+
+export const getSingleUser = asyncHandler(async(req,res,next)=>{
+    const user = await User.findById(req.params.id);
+    if(!user){
+        return next(new CustomError(`User doesn't exist with this id: ${req.params.id}`,400))
+    }
+    res.status(200).json({
+        success: true,
+        user
+    })
+})
+
+//Admin- Changing user role
+
+export const updateUserRole = asyncHandler(async(req,res,next)=>{
+    const {role} = req.body;
+    const newUserData={
+        role
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+        new:true,
+        runValidators:true
+    })
+    if(!user){
+        return next(new CustomError("User doesn't exist",400))
+    }
+    res.status(200).json({
+        success: true,
+        user
+    })
+ 
+})
+
+
+// Admin - Delete User Profile
+
+export const deleteUser = asyncHandler(async(req,res,next)=>{
+   const user = await User.findById(req.params.id);
+   if(!user){
+    return next(new CustomError("User doesn't exist",400))
+   }
+  
+  await User.findByIdAndDelete(req.params.id);
+  
+    res.status(200).json({
+        success:true,
+        message: "User Deleted Successfully"
+    })
 })

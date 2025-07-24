@@ -91,3 +91,13 @@ export let deleteProduct = asyncHandler(async(req, res, next) => {
     message: 'Delete product'
   })
 } )
+
+//admin
+
+export const getAdminProducts = asyncHandler(async (req, res, next) => {
+  const products = await Product.find();
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
