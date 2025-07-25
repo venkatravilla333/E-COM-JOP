@@ -1,4 +1,4 @@
-import { createProduct, deleteProduct, getAdminProducts, getAllProducts, getSingleProduct, updateProduct } from "../controllers/productController.js";
+import { createProduct, createReviewForProduct, deleteProduct, deleteReview, getAdminProducts, getAllProducts, getProductReviews, getSingleProduct, updateProduct } from "../controllers/productController.js";
 
 import express from 'express'
 import { roleBasedAccess, verifyUserAuthentication } from "../middlewares/userAuth.js";
@@ -32,5 +32,13 @@ router.route('admin/products').post(verifyUserAuthentication, roleBasedAccess('a
 router.route('admin/product/:id')
   .put(verifyUserAuthentication, roleBasedAccess('admin'), updateProduct)
   .delete(verifyUserAuthentication, roleBasedAccess('admin'), deleteProduct)
+
+  
+router.route("/review").put(verifyUserAuthentication, createReviewForProduct)
+
+router.route("/admin/reviews").get(verifyUserAuthentication, roleBasedAccess("admin"), getProductReviews).delete(verifyUserAuthentication,roleBasedAccess("admin"),deleteReview)
+
+
+
 
   export default router

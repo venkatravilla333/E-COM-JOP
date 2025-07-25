@@ -48,6 +48,9 @@ let productSchema = new mongoose.Schema({
   },
   reviews: [
     {
+      user: {
+         type: mongoose.Schema.ObjectId
+      },
       name: {
         type: String,
         required: true
