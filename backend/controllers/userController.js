@@ -56,7 +56,7 @@ export let loginUser = asyncHandler(async (req, res) => {
     return next(new CustomError('Invalid user name or password', 401));
   }
 
-  let matchPassword = user.comparePassword(password);
+  let matchPassword = await user.comparePassword(password);
 
   if (!matchPassword) {
     return next(new CustomError('Invalid user name or password', 401));

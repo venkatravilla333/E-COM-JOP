@@ -6,9 +6,11 @@ import dotenv from 'dotenv' //ES-6 module pattern
 import { connectWithMongoDB } from './config/db.js'
 import customErrorHandler from './middlewares/error.js'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 import product from './routes/productRoutes.js'
 import user from './routes/userRoutes.js'
+import order from './routes/orderRoutes.js'
 
 dotenv.config({
   path: './config/config.env'
@@ -26,9 +28,12 @@ connectWithMongoDB()
 var app = express() //server creation
 app.use(express.json()) 
 app.use(cookieParser()) 
+app.use(cors());
+
 
 app.use('/api/v1', product)
 app.use('/api/v1',  user)
+app.use('/api/v1',  order)
 
 app.use(customErrorHandler)
 
